@@ -59,14 +59,14 @@ public class FitnessSystem
             if (plan.isSuitable(fitnessGoal, fitnessLevel)) {
                 plan.displayPlanDetails();
                 System.out.println("\tRequired Weekly Exercise Time Based on Your Level: "
-                        + ExerciseTimeCalculator.calculateTime(plan.minDurationPerWeek, fitnessLevel) + " minutes per week");
+                        + ExerciseTimeCalculator.calculateTime(plan.getMinDurationPerWeek(), fitnessLevel) + " minutes per week");
                 System.out.println("\tAdditional Notes:\n" + MedicalHistory.getHealthNotes());
                 foundSuitablePlan = true;  
             }
         }
 
         if (!foundSuitablePlan) {
-            System.out.println("\nNo suitable plan found for your fitness goal and level.\n");
+            System.out.println("\n\tNo suitable plan found for your fitness goal and level.\n");
         }
     }
 
