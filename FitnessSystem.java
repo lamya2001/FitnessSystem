@@ -38,30 +38,33 @@ public class FitnessSystem {
         if (fitnessGoal == null) {
             return;
         }
+        System.out.println(fitnessGoal);
         
         String fitnessLevel = selectFitnessLevel(scanner);
         if (fitnessLevel == null) {
             return;
         }
-        
+        System.out.println(fitnessLevel);
         MedicalHistory.collectMedicalHistory();
         FitnessPlan[] plans = {
         new HIIT(),
         new Yoga(),
         };
   
+        boolean foundSuitablePlan = false;  
+    
         for (FitnessPlan plan : plans) {
             if (plan.isSuitable(fitnessGoal, fitnessLevel)) {
                 plan.displayPlanDetails();
-                System.out.println("Required Weekly Exercise Time Based on Your Level:"
-                        +ExerciseTimeCalculator.calculateTime(plan.minDurationPerWeek,fitnessLevel));
-                System.out.println("Additional Notes:\n"
-                        +MedicalHistory.getHealthNotes());               
-                return;
-            }else{
-                System.out.println("No suitable plan found for your fitness goal and level.");
-                 return;
+                System.out.println("Required Weekly Exercise Time Based on Your Level: "
+                        + ExerciseTimeCalculator.calculateTime(plan.minDurationPerWeek, fitnessLevel));
+                System.out.println("Additional Notes:\n" + MedicalHistory.getHealthNotes());
+                foundSuitablePlan = true;  
             }
+        }
+
+        if (!foundSuitablePlan) {
+            System.out.println("No suitable plan found for your fitness goal and level.");
         }
     }
 
