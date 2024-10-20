@@ -1,6 +1,7 @@
 package com.mycompany.fitnesssystem;
 
-public class FitnessPlan {
+public class FitnessPlan
+{
     protected String name;
     protected int minDurationPerWeek; 
     protected String minFitnessLevel;
@@ -13,17 +14,15 @@ public class FitnessPlan {
         this.healthGoal = healthGoal;
     }
     
-   
     public boolean isSuitable(String fitnessGoal, String fitnessLevel) {
         return this.healthGoal.equals(fitnessGoal) && this.minFitnessLevel.equals(fitnessLevel);
     }
     
-   
     public void displayPlanDetails() {
-        System.out.println("Fitness Plan: " + name);
-        System.out.println("Minimum Duration per Week: " + minDurationPerWeek + " minutes");
-        System.out.println("Minimum Required Fitness Level: " + minFitnessLevel);
-        System.out.println("Health Goal: " + healthGoal);
+        System.out.println("\n\tFitness Plan: " + name);
+        System.out.println("\tMinimum Duration per Week: " + minDurationPerWeek + " minutes");
+        System.out.println("\tMinimum Required Fitness Level: " + minFitnessLevel);
+        System.out.println("\tHealth Goal: " + healthGoal);
         System.out.println();
     }
 }
