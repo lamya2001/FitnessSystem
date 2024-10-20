@@ -2,10 +2,10 @@ package com.mycompany.fitnesssystem;
 
 public class FitnessPlan
 {
-    protected String name;
-    protected int minDurationPerWeek; 
-    protected String minFitnessLevel;
-    protected String healthGoal;
+    private String name;
+    private int minDurationPerWeek; 
+    private String minFitnessLevel;
+    private String healthGoal;
 
     public FitnessPlan(String name, int minDurationPerWeek, String minFitnessLevel, String healthGoal) {
         this.name = name;
@@ -26,19 +26,6 @@ public class FitnessPlan
     }
     public String getHealthGoal() {
         return healthGoal;
-    }
-    // Setters
-    public void setName(String name) {
-        this.name = name;
-    }
-    public void setMinDurationPerWeek(int minDurationPerWeek) {
-        this.minDurationPerWeek = minDurationPerWeek;
-    }
-    public void setMinFitnessLevel(String minFitnessLevel) {
-        this.minFitnessLevel = minFitnessLevel;
-    }
-    public void setHealthGoal(String healthGoal) {
-        this.healthGoal = healthGoal;
     }
     
     public boolean isSuitable(String fitnessGoal, String fitnessLevel) {
