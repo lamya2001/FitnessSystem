@@ -47,7 +47,7 @@ public class FitnessSystem {
         MedicalHistory.collectMedicalHistory();
         FitnessPlan[] plans = {
         new HIIT(),
-        // أضف خطط أخرى هنا
+        new Yoga(),
         };
   
         for (FitnessPlan plan : plans) {
