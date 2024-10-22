@@ -2,133 +2,284 @@ package com.mycompany.fitnesssystem;
 
 import java.util.Scanner;
 
-public class FitnessSystem
-{
-    public static void main(String[] args)
-    {
-        Scanner scanner = new Scanner(System.in);
-        int systemState = -1;
+import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Scanner;
 
-        System.out.println("\n* Welcome to the Personalized Fitness Plan Recommendation System *");
+public class FitnessSystem {
+	private static final String DEFAULT_GOAL = "Weight Loss";
+	private static String DEFAULT_LEVEL;
+	private static final String CREDENTIALS_FILE = "credentials.txt"; // File to store username and password
 
-        do {
-        System.out.println("\n----------Main Menu------------");
-        System.out.println("1- Start looking for your fit fitness plan.\n"
-                + "2- Exit.\n"
-                + ">> Enter The Process number you want:");
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
 
-        String input = scanner.nextLine();
-         systemState = Validator.getValidOption(input, 2);         
-            switch (systemState){
-                case 1:
-                    startFitnessPlan(scanner);
-                    break;
-                case 2:
-                    System.out.println("\nThank you for using the system. Goodbye!\n");
-                    return;
-                default:
-                    System.out.println("Invalid choice. Please enter 1 or 2.");
-                    break;
-              }
-        }while (true);
-    }
+		System.out.println("\n* Welcome to the Personalized Fitness Plan Recommendation System *");
 
-    private static void startFitnessPlan(Scanner scanner) {
-        String fitnessGoal = selectFitnessGoal(scanner);
-        if (fitnessGoal == null) {
-            return;
-        }
-        System.out.println(fitnessGoal);
-        
-        String fitnessLevel = selectFitnessLevel(scanner);
-        if (fitnessLevel == null) {
-            return;
-        }
-        System.out.println(fitnessLevel);
-        MedicalHistory.collectMedicalHistory();
-        FitnessPlan[] plans = {
-            new Cardio(),
-            new StrengthTraining(),
-            new HIIT(),
-            new Yoga(),
-        };
-  
-        boolean foundSuitablePlan = false;  
-    
-        for (FitnessPlan plan : plans) {
-            if (plan.isSuitable(fitnessGoal, fitnessLevel)) {
-                plan.displayPlanDetails();
-                System.out.println("\tRequired Weekly Exercise Time Based on Your Level: "
-                        + ExerciseTimeCalculator.calculateTime(plan.getMinDurationPerWeek(), fitnessLevel) + " minutes per week");
-                System.out.println("\tAdditional Notes:\n" + MedicalHistory.getHealthNotes());
-                foundSuitablePlan = true;  
-            }
-        }
+		boolean loggedIn = false;
 
-        if (!foundSuitablePlan) {
-            System.out.println("\n\tNo suitable plan found for your fitness goal and level.\n");
-        }
-    }
+		// Prompt for login or account creation until successful login
+		while (!loggedIn) {
+			if (accountExists()) {
+				// Prompt for login if the account exists
+				loggedIn = login(scanner);
+				if (!loggedIn) {
+					System.out.println("Login failed. Would you like to create a new account? (yes/no)");
+					String choice = scanner.nextLine().trim().toLowerCase();
+					if (choice.equals("yes")) {
+						createAccount(scanner);
+					}
+				}
+			} else {
+				// No account exists, ask for account creation
+				System.out.println("No account found. Please create a new account.");
+				createAccount(scanner);
+			}
+		}
 
-    private static String selectFitnessGoal(Scanner scanner) {
-        String fitnessGoal = null;
-        while (fitnessGoal == null) {
-            System.out.println("\n----------Fitness Goal Menu------------");
-            System.out.println("1- Weight Loss\n"
-                    + "2- Muscle Building\n"
-                    + "3- Improve Cardiovascular Health\n"
-                    + "4- Stress Relief\n"
-                    + "5- Return to Main Menu\n"
-                    + ">> Enter your Fitness Goal:");
-            
-            String input = scanner.nextLine();
-            int goalOption = Validator.getValidOption(input, 5);
-            switch (goalOption) {
-                case 1:
-                    return "Weight Loss";
-                case 2:
-                    return "Muscle Building";
-                case 3:
-                    return "Improve Cardiovascular Health";
-                case 4:
-                    return "Stress Relief";
-                case 5:
-                    return null; 
-                default:
-                    System.out.println("Invalid choice. Please enter a valid option from 1 to 5.");
-                    break;
-            }
-        }
-        return fitnessGoal;
-    }
+		// After successful login, show the main menu
+		int systemState = -1;
+		do {
+			System.out.println("\n----------Main Menu------------");
+			System.out.println("1- Start looking for your fit fitness plan.\n" + "2- Exit.\n"
+					+ ">> Enter the process number you want:");
 
-    private static String selectFitnessLevel(Scanner scanner) {
-        String fitnessLevel = null;
-        while (fitnessLevel == null) {
-            System.out.println("\n----------Fitness Level Menu------------");
-            System.out.println("1- Beginner\n"
-                    + "2- Intermediate\n"
-                    + "3- Advanced\n"
-                    + "4- Return to Main Menu\n"
-                    + ">> Enter your Current Fitness Level:");
+			String input = scanner.nextLine();
+			systemState = Validator.getValidOption(input, 2);
+			switch (systemState) {
+				case 1:
+					startFitnessPlan(scanner);
+					break;
+				case 2:
+					System.out.println("\nThank you for using the system. Goodbye!\n");
+					return;
+				default:
+					System.out.println("Invalid choice. Please enter 1 or 2.");
+					break;
+			}
+		} while (true);
+	}
 
-            String input = scanner.nextLine();
-            int levelOption = Validator.getValidOption(input, 4);
-            
-            switch (levelOption) {
-                case 1:
-                    return "Beginner";
-                case 2:
-                    return "Intermediate";
-                case 3:
-                    return "Advanced";
-                case 4:
-                    return null; 
-                default:
-                    System.out.println("Invalid choice. Please enter a valid option from 1 to 4.");
-                    break;
-            }
-        }
-        return fitnessLevel;
-    }
+	// Method to check if an account already exists by checking if the file exists
+	private static boolean accountExists() {
+		File file = new File(CREDENTIALS_FILE);
+		return file.exists();
+	}
+
+	// Account creation method
+	private static void createAccount(Scanner scanner) {
+		System.out.print("Enter a username: ");
+		String username = scanner.nextLine();
+		System.out.print("Enter a password: ");
+		String password = scanner.nextLine();
+
+		String hashedPassword = hashPassword(password); // Hash the password
+
+		// Store the credentials in a file
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(CREDENTIALS_FILE))) {
+			writer.write(username + ":" + hashedPassword);
+			System.out.println("Account created successfully!");
+		} catch (IOException e) {
+			System.out.println("Error storing credentials: " + e.getMessage());
+		}
+	}
+
+	// Login method that reads the credentials from the file
+	private static boolean login(Scanner scanner) {
+		System.out.println("\nPlease login to continue.");
+		System.out.print("Enter your username: ");
+		String username = scanner.nextLine();
+		System.out.print("Enter your password: ");
+		String password = scanner.nextLine();
+
+		// Read stored credentials from file
+		try (BufferedReader reader = new BufferedReader(new FileReader(CREDENTIALS_FILE))) {
+			String line = reader.readLine();
+			if (line != null) {
+				String[] credentials = line.split(":");
+				String storedUsername = credentials[0];
+				String storedHashedPassword = credentials[1];
+
+				String hashedPassword = hashPassword(password); // Hash the entered password
+
+				if (storedUsername.equals(username) && storedHashedPassword.equals(hashedPassword)) {
+					System.out.println("Login successful! Welcome " + storedUsername + "!");
+					return true;
+				} else {
+					System.out.println("Invalid username or password.");
+				}
+			}
+		} catch (IOException e) {
+			System.out.println("Error reading credentials: " + e.getMessage());
+		}
+		return false;
+	}
+
+	// Hashing the password using SHA-256
+	private static String hashPassword(String password) {
+		try {
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			byte[] hash = md.digest(password.getBytes());
+			StringBuilder hexString = new StringBuilder();
+
+			for (byte b : hash) {
+				String hex = Integer.toHexString(0xff & b);
+				if (hex.length() == 1)
+					hexString.append('0');
+				hexString.append(hex);
+			}
+			return hexString.toString();
+
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
+	}
+//////////////////////////////////////////////////// --------> Here
+	private static void startFitnessPlan(Scanner scanner) {
+		String fitnessGoal = selectFitnessGoal(scanner);
+		if (fitnessGoal == null) {
+			return;
+		}
+//		if (fitnessGoal.length() < 5) {
+//			fitnessGoal = DEFAULT_GOAL;
+//			System.out.println("Invalid choice. ");
+//			System.out.println("Default goal selected: " + DEFAULT_GOAL);
+//		}
+
+		String fitnessLevel = selectFitnessLevel(scanner, fitnessGoal);
+		if (fitnessLevel == null) {
+			return;
+		}
+//		if (fitnessLevel.length() <= 5) {
+//		fitnessLevel = DEFAULT_LEVEL;
+//		System.out.println("Invalid choice. ");
+//		System.out.println("Default Level selected: " + DEFAULT_LEVEL);
+//		} else {
+//		System.out.println("Selected Fitness Level: " + fitnessLevel);
+//		}
+//////////////////////////////////////////////////// --------> To Here
+
+		MedicalHistory.collectMedicalHistory();
+		FitnessPlan[] plans = { new Cardio(), new StrengthTraining(), new HIIT(), new Yoga(), };
+
+		boolean foundSuitablePlan = false;
+
+		for (FitnessPlan plan : plans) {
+			if (plan.isSuitable(fitnessGoal, fitnessLevel)) {
+				plan.displayPlanDetails();
+				System.out.println("\tRequired Weekly Exercise Time Based on Your Level: "
+						+ ExerciseTimeCalculator.calculateTime(plan.getMinDurationPerWeek(), fitnessLevel)
+						+ " minutes per week");
+				System.out.println("\tAdditional Notes:\n" + MedicalHistory.getHealthNotes());
+				foundSuitablePlan = true;
+			}
+		}
+
+		if (!foundSuitablePlan) {
+			System.out.println("\n\tNo suitable plan found for your fitness goal and level.\n");
+		}
+	}
+        //correct
+	private static String selectFitnessGoal(Scanner scanner) {
+		String fitnessGoal = null;
+		while (fitnessGoal == null) {
+			System.out.println("\n----------Fitness Goal Menu------------");
+			System.out.println("1- Weight Loss\n" + "2- Muscle Building\n" + "3- Improve Cardiovascular Health\n"
+					+ "4- Stress Relief\n" + "5- Return to Main Menu\n" + ">> Enter your Fitness Goal:");
+
+			String input = scanner.nextLine();
+
+			int goalOption = Validator.getValidOption(input, 5);
+
+//////////////////////////////////////////////////// --------> Here
+//			if (goalOption == 5) {
+//				return null; // Return to the main menu
+//			}
+			switch (goalOption) {
+				case 1:
+					return "Weight Loss";
+				case 2:
+					return "Muscle Building";
+				case 3:
+					return "Improve Cardiovascular Health";
+				case 4:
+					return "Stress Relief";
+				case 5:
+					return null; // Return to the main menu
+				default:
+					fitnessGoal = DEFAULT_GOAL;
+					System.out.println("Invalid choice. ");
+					System.out.println("Default goal selected: " + DEFAULT_GOAL);
+					return fitnessGoal;
+			}
+		}
+		return fitnessGoal;
+	}
+        //correct
+	private static String selectFitnessLevel(Scanner scanner, String fitnessGoal) {
+		String fitnessLevel = null;
+
+		while (fitnessLevel == null) {
+			System.out.println("\n----------Fitness Level Menu------------");
+			System.out.println("1- Beginner\n" + "2- Intermediate\n" + "3- Advanced\n" + "4- Return to Main Menu\n"
+					+ ">> Enter your Current Fitness Level:");
+
+			String input = scanner.nextLine();
+			int levelOption = Validator.getValidOption(input, 4);
+
+			// Check the selected fitness plan and set the minimum required level
+			String minRequiredLevel = "";
+			switch (fitnessGoal) {
+				case "Weight Loss":
+					minRequiredLevel = "Beginner";// Beginner or above accepted
+					break;
+				case "Muscle Building":
+					minRequiredLevel = "Intermediate";//Intermediate or above accepted
+					break;
+				case "Improve Cardiovascular Health":
+					minRequiredLevel = "Advanced";// Beginner or above accepted
+					break;
+				case "Stress Relief":
+					minRequiredLevel = "Beginner";// Beginner or above accepted
+					break;
+			}
+
+			// Set the DEFAULT_LEVEL based on the minRequiredLevel
+			DEFAULT_LEVEL = minRequiredLevel;
+
+			switch (levelOption) {
+				case 1: // Beginner
+                                    if (minRequiredLevel.equals("Beginner")) {
+                                        fitnessLevel = "Beginner";
+                                    } else {
+                                        System.out.println("Invalid choice. Please select a higher fitness level.");
+                                    }
+                                    break;
+                                case 2: // Intermediate
+                                    if (minRequiredLevel.equals("Beginner") || minRequiredLevel.equals("Intermediate")) {
+                                        fitnessLevel = "Intermediate";
+                                    } else {
+                                        System.out.println("Invalid choice. Please select a higher fitness level.");
+                                    }
+                                    break;
+                                case 3: // Advanced
+                                    if (minRequiredLevel.equals("Beginner") || minRequiredLevel.equals("Intermediate") || minRequiredLevel.equals("Advanced")) {
+                                        fitnessLevel = "Advanced";
+                                    } else {
+                                        System.out.println("Invalid choice. Please select a higher fitness level.");
+                                    }
+                                    break;
+				case 4:
+					return null; // Return to the main menu
+				default:
+					fitnessLevel = DEFAULT_LEVEL;
+					 System.out.println("Invalid choice. ");
+					 System.out.println("Default Level selected: " + DEFAULT_LEVEL);
+					break;
+			}
+		}
+		return fitnessLevel;
+	}
 }
+//////////////////////////////////////////////////// --------> To Here
