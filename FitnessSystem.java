@@ -11,6 +11,9 @@ public class FitnessSystem {
 	private static final String DEFAULT_GOAL = "Weight Loss";
 	private static String DEFAULT_LEVEL;
 	private static final String CREDENTIALS_FILE = "credentials.txt"; // File to store username and password
+        private static Timer inactivityTimer; // Timer for inactivity after login
+        private static final int FIRST_WARNING_TIME = 15000; // 15 seconds
+        private static final int RETURN_TO_LOGIN_TIME = 25000; // 25 seconds (15+10)
 
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
@@ -37,8 +40,9 @@ public class FitnessSystem {
 				createAccount(scanner);
 			}
 		}
-
-		// After successful login, show the main menu
+		 // After successful login, start inactivity timer in the main menu
+		        startInactivityTimer();
+		//show the main menu
 		int systemState = -1;
 		do {
 			System.out.println("\n----------Main Menu------------");
@@ -137,6 +141,8 @@ public class FitnessSystem {
 	}
 //////////////////////////////////////////////////// --------> Here
 	private static void startFitnessPlan(Scanner scanner) {
+		resetInactivityTimer(); // Reset timer when starting the fitness plan
+
 		String fitnessGoal = selectFitnessGoal(scanner);
 		if (fitnessGoal == null) {
 			return;
@@ -180,6 +186,42 @@ public class FitnessSystem {
 			System.out.println("\n\tNo suitable plan found for your fitness goal and level.\n");
 		}
 	}
+		    //Method to start the inactivity timer after login
+	    private static void startInactivityTimer() {
+		inactivityTimer = new Timer();
+	
+		// First warning after 15 seconds of inactivity
+		inactivityTimer.schedule(new TimerTask() {
+		    @Override
+		    public void run() {
+			System.out.println(
+				"\nYou have been inactive for 15 seconds. If you do not provide input in the next 10 seconds, you will be returned to the login.");
+		    }
+		}, FIRST_WARNING_TIME);
+	
+		// Return to login after an additional 10 seconds of inactivity (total 25
+		// seconds)
+		inactivityTimer.schedule(new TimerTask() {
+		    @Override
+		    public void run() {
+			System.out.println("Returning to login screen due to inactivity.");
+			inactivityTimer.cancel(); // Cancel the timer
+			resetToLogin(); // Reset the state and return to login
+		    }
+		}, RETURN_TO_LOGIN_TIME);
+	    }
+	    private static void resetToLogin() {
+        System.out.println("\nLogging out due to inactivity...");
+        main(new String[] {}); // Restart the main method to simulate returning to the login screen
+    }
+
+    // Modified: Method to reset the inactivity timer after user interaction
+    private static void resetInactivityTimer() {
+        if (inactivityTimer != null) {
+            inactivityTimer.cancel();
+        }
+        startInactivityTimer(); // Restart the timer after resetting
+    }
         //correct
 	private static String selectFitnessGoal(Scanner scanner) {
 		String fitnessGoal = null;
