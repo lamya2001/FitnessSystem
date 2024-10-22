@@ -2,10 +2,10 @@ package com.mycompany.fitnesssystem;
 
 public class FitnessPlan
 {
-    private String name;
-    private int minDurationPerWeek; 
-    private String minFitnessLevel;
-    private String healthGoal;
+    protected String name;
+    protected int minDurationPerWeek; 
+    protected String minFitnessLevel;
+    protected String healthGoal;
 
     public FitnessPlan(String name, int minDurationPerWeek, String minFitnessLevel, String healthGoal) {
         this.name = name;
@@ -27,9 +27,44 @@ public class FitnessPlan
     public String getHealthGoal() {
         return healthGoal;
     }
+    // Setters
+    public void setName(String name) {
+        this.name = name;
+    }
+    public void setMinDurationPerWeek(int minDurationPerWeek) {
+        this.minDurationPerWeek = minDurationPerWeek;
+    }
+    public void setMinFitnessLevel(String minFitnessLevel) {
+        this.minFitnessLevel = minFitnessLevel;
+    }
+    public void setHealthGoal(String healthGoal) {
+        this.healthGoal = healthGoal;
+    }
     
-    public boolean isSuitable(String fitnessGoal, String fitnessLevel) {
-        return this.healthGoal.equals(fitnessGoal) && this.minFitnessLevel.equals(fitnessLevel);
+   public boolean isSuitable(String fitnessGoal, String fitnessLevel) {
+    return this.healthGoal.equals(fitnessGoal) && compareFitnessLevels(fitnessLevel, this.minFitnessLevel);
+    }
+
+    
+    private boolean compareFitnessLevels(String userLevel, String minRequiredLevel) {
+        int userLevelValue = getFitnessLevelValue(userLevel);
+        int requiredLevelValue = getFitnessLevelValue(minRequiredLevel);
+
+        return userLevelValue >= requiredLevelValue; 
+    }
+
+   
+    private int getFitnessLevelValue(String level) {
+        switch (level) {
+            case "Beginner":
+                return 1;
+            case "Intermediate":
+                return 2;
+            case "Advanced":
+                return 3;
+            default:
+                return 0; 
+        }
     }
     
     public void displayPlanDetails() {
