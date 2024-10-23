@@ -6,6 +6,8 @@ import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class FitnessSystem {
 	private static final String DEFAULT_GOAL = "Weight Loss";
