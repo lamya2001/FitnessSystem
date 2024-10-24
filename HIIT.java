@@ -1,7 +1,7 @@
 package com.mycompany.fitnesssystem;
 
 public class HIIT extends FitnessPlan {
-    package HIIT() {
+    protected HIIT() {
         super("HIIT", 90, "Advanced", "Improve Cardiovascular Health");
     }
 }
