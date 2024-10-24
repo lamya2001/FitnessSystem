@@ -1,13 +1,13 @@
 package com.mycompany.fitnesssystem;
 
-package class FitnessPlan
+public class FitnessPlan
 {
     protected String name;
     protected int minDurationPerWeek; 
     protected String minFitnessLevel;
     protected String healthGoal;
 
-    package FitnessPlan(String name, int minDurationPerWeek, String minFitnessLevel, String healthGoal) {
+    protected FitnessPlan(String name, int minDurationPerWeek, String minFitnessLevel, String healthGoal) {
         this.name = name;
         this.minDurationPerWeek = minDurationPerWeek;
         this.minFitnessLevel = minFitnessLevel;
@@ -15,33 +15,33 @@ package class FitnessPlan
     }
     
     // Getters
-    package String getName() {
+    protected String getName() {
         return name;
     }
-    package int getMinDurationPerWeek() {
+    protected int getMinDurationPerWeek() {
         return minDurationPerWeek;
     }
-    package String getMinFitnessLevel() {
+    protected String getMinFitnessLevel() {
         return minFitnessLevel;
     }
-    package String getHealthGoal() {
+    protected String getHealthGoal() {
         return healthGoal;
     }
     // Setters
-    package void setName(String name) {
+    protected void setName(String name) {
         this.name = name;
     }
-    package void setMinDurationPerWeek(int minDurationPerWeek) {
+    protected void setMinDurationPerWeek(int minDurationPerWeek) {
         this.minDurationPerWeek = minDurationPerWeek;
     }
-    package void setMinFitnessLevel(String minFitnessLevel) {
+    protected void setMinFitnessLevel(String minFitnessLevel) {
         this.minFitnessLevel = minFitnessLevel;
     }
-    package void setHealthGoal(String healthGoal) {
+    protected void setHealthGoal(String healthGoal) {
         this.healthGoal = healthGoal;
     }
     
-   package boolean isSuitable(String fitnessGoal, String fitnessLevel) {
+   protected boolean isSuitable(String fitnessGoal, String fitnessLevel) {
     return this.healthGoal.equals(fitnessGoal) && compareFitnessLevels(fitnessLevel, this.minFitnessLevel);
     }
 
@@ -67,7 +67,7 @@ package class FitnessPlan
         }
     }
     
-    package void displayPlanDetails() {
+    protected void displayPlanDetails() {
         System.out.println("\n\tFitness Plan: " + getName());
         System.out.println("\tMinimum Duration per Week: " + getMinDurationPerWeek() + " minutes");
         System.out.println("\tMinimum Required Fitness Level: " + getMinFitnessLevel());
