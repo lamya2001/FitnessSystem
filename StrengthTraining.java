@@ -1,7 +1,7 @@
 package com.mycompany.fitnesssystem;
 
 class StrengthTraining extends FitnessPlan {
-    public StrengthTraining() {
+    package StrengthTraining() {
         super("Strength Training", 120, "Intermediate", "Muscle Building");
     }
 }
