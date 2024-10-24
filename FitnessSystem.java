@@ -68,6 +68,8 @@ public class FitnessSystem {
 					System.out.println("Invalid choice. Please enter 1 or 2.");
 					break;
 			}
+		resetInactivityTimer();
+
 		} while (true);
 	}
 
@@ -218,7 +220,7 @@ public class FitnessSystem {
 	    }
 	    private static void resetToLogin() {
         System.out.println("\nLogging out due to inactivity...");
-        main(new String[] {}); // Restart the main method to simulate returning to the login screen
+        System.exit(0);
     }
 
     // Modified: Method to reset the inactivity timer after user interaction
@@ -230,6 +232,7 @@ public class FitnessSystem {
     }
         //correct
 	private static String selectFitnessGoal(Scanner scanner) {
+		resetInactivityTimer();
 		String fitnessGoal = null;
 		while (fitnessGoal == null) {
 			System.out.println("\n----------Fitness Goal Menu------------");
@@ -241,9 +244,6 @@ public class FitnessSystem {
 			int goalOption = Validator.getValidOption(input, 5);
 
 //////////////////////////////////////////////////// --------> Here
-//			if (goalOption == 5) {
-//				return null; // Return to the main menu
-//			}
 			switch (goalOption) {
 				case 1:
 					return "Weight Loss";
@@ -266,6 +266,7 @@ public class FitnessSystem {
 	}
         //correct
 	private static String selectFitnessLevel(Scanner scanner, String fitnessGoal) {
+		resetInactivityTimer();
 		String fitnessLevel = null;
 
 		while (fitnessLevel == null) {
