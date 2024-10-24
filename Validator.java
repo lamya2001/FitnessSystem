@@ -2,7 +2,7 @@ package com.mycompany.fitnesssystem;
 
 public class Validator {
 
-    public static int getValidInteger(String input) {
+    protected static int getValidInteger(String input) {
         try {
             return Integer.parseInt(input);
         } catch (NumberFormatException e) {
@@ -10,7 +10,7 @@ public class Validator {
         }
     }
 
-    public static int getValidOption(String input, int maxOption) {
+    protected static int getValidOption(String input, int maxOption) {
         if (isValidInput(input, maxOption)) {
             return Integer.parseInt(input); 
         } else {
@@ -19,7 +19,7 @@ public class Validator {
     }
 
     
-    public static boolean isValidInput(String input, int maxOption) {
+    protected static boolean isValidInput(String input, int maxOption) {
         try {
             int option = Integer.parseInt(input);
             return option >= 1 && option <= maxOption; 
