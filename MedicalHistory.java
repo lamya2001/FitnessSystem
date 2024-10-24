@@ -7,7 +7,7 @@ public class MedicalHistory
 {
     private static ArrayList<String> healthNotes = new ArrayList<>();
     
-    public static void collectMedicalHistory() {
+    package static void collectMedicalHistory() {
         
         Scanner scanner =new Scanner (System.in);
         
@@ -77,7 +77,7 @@ public class MedicalHistory
             break; 
         }
     }
-    public static String getHealthNotes() {
+    package static String getHealthNotes() {
         return String.join("\n", healthNotes);
     }
 }
