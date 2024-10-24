@@ -1,7 +1,7 @@
 package com.mycompany.fitnesssystem;
 
 public class ExerciseTimeCalculator {
-    package static int calculateTime(int timeInPlan, String fitnessLevel) {
+    protected static int calculateTime(int timeInPlan, String fitnessLevel) {
         int additionalMinutes;
         switch (fitnessLevel) {
             case "Beginner":
