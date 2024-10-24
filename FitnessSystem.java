@@ -17,6 +17,7 @@ public class FitnessSystem {
 	private static final String DEFAULT_GOAL = "Weight Loss";
 	private static String DEFAULT_LEVEL;
 	private static final String CREDENTIALS_FILE = "credentials.txt"; // File to store username and password
+   	private static final String FEEDBACK_FILE = "feedback.txt"; // File to store feedback	
         private static Timer inactivityTimer; // Timer for inactivity after login
         private static final int FIRST_WARNING_TIME = 15000; // 15 seconds
         private static final int RETURN_TO_LOGIN_TIME = 25000; // 25 seconds (15+10)
@@ -63,6 +64,7 @@ public class FitnessSystem {
 					break;
 				case 2:
 					System.out.println("\nThank you for using the system. Goodbye!\n");
+					System.exit(0);
 					return;
 				default:
 					System.out.println("Invalid choice. Please enter 1 or 2.");
@@ -203,7 +205,7 @@ public class FitnessSystem {
 		    @Override
 		    public void run() {
 			System.out.println(
-				"\nYou have been inactive for 15 seconds. If you do not provide input in the next 10 seconds, you will be returned to the login.");
+				"\nYou have been inactive for 15 seconds. \nIf you do not provide input in the next 10 seconds, The system will shutdown.");
 		    }
 		}, FIRST_WARNING_TIME);
 	
@@ -330,5 +332,38 @@ public class FitnessSystem {
 		}
 		return fitnessLevel;
 	}
+// Method to prompt the user for feedback on the fitness plan
+    private static void promptForFeedback(String fitnessGoal, String fitnessLevel) {
+        Scanner scanner = new Scanner(System.in);
+        int rating = -1;
+        
+        // Ask for a rating between 1 and 5
+        while (rating < 1 || rating > 5) {
+            System.out.print("\nPlease rate the fitness plan on a scale from 1 to 5 (5 = Excellent, 1 = Poor): ");
+            String input = scanner.nextLine();
+            try {
+                rating = Integer.parseInt(input);
+                if (rating < 1 || rating > 5) {
+                    System.out.println("Invalid rating. Please enter a number between 1 and 5.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number between 1 and 5.");
+            }
+        }
+
+        // Store the feedback in a file
+        storeFeedback(currentUsername, fitnessGoal, fitnessLevel, rating);
+    }
+
+    // Method to store feedback in the feedback file
+    private static void storeFeedback(String username, String fitnessGoal, String fitnessLevel, int rating) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FEEDBACK_FILE, true))) {
+            writer.write("Username: " + username + ", Goal: " + fitnessGoal + ", Level: " + fitnessLevel + ", Rating: " + rating + "\n");
+            System.out.println("Thank you for your feedback!");
+        } catch (IOException e) {
+            System.out.println("Error storing feedback: " + e.getMessage());
+        }
+    }
 }
+
 //////////////////////////////////////////////////// --------> To Here
