@@ -1,7 +1,7 @@
 package com.mycompany.fitnesssystem;
 
  class Cardio extends FitnessPlan {
-    package Cardio() {
+    protected Cardio() {
         super("Cardio", 150, "Beginner", "Weight Loss");
     }
 }
