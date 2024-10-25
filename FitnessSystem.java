@@ -12,6 +12,12 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 public class FitnessSystem {
 	private static final String DEFAULT_GOAL = "Weight Loss";
@@ -21,60 +27,80 @@ public class FitnessSystem {
         private static Timer inactivityTimer; // Timer for inactivity after login
         private static final int FIRST_WARNING_TIME = 15000; // 15 seconds
         private static final int RETURN_TO_LOGIN_TIME = 25000; // 25 seconds (15+10)
+	private static Logger logger = Logger.getLogger("UserActivityLog");
+	private static FileHandler fh;
 
 	public static void main(String[] args) {
-		Scanner scanner = new Scanner(System.in);
+				Scanner scanner = new Scanner(System.in);
 
-		System.out.println("\n* Welcome to the Personalized Fitness Plan Recommendation System *");
+	    try {
+	        fh = new FileHandler("user_activity.log", true); // Append mode set to true
+	        logger.addHandler(fh);
+	        SimpleFormatter formatter = new SimpleFormatter();
+	        fh.setFormatter(formatter);
 
-		boolean loggedIn = false;
+	        logger.setLevel(Level.INFO); // Set the logging level as needed
 
-		// Prompt for login or account creation until successful login
-		while (!loggedIn) {
-			if (accountExists()) {
-				// Prompt for login if the account exists
-				loggedIn = login(scanner);
-				if (!loggedIn) {
-					System.out.println("Login failed. Would you like to create a new account? (yes/no)");
-					String choice = scanner.nextLine().trim().toLowerCase();
-					if (choice.equals("yes")) {
-						createAccount(scanner);
-					}
-				}
-			} else {
-				// No account exists, ask for account creation
-				System.out.println("No account found. Please create a new account.");
-				createAccount(scanner);
-			}
-		}
-		 // After successful login, start inactivity timer in the main menu
-		        startInactivityTimer();
-		//show the main menu
-		int systemState = -1;
-		do {
-			System.out.println("\n----------Main Menu------------");
-			System.out.println("1- Start looking for your fit fitness plan.\n" + "2- Exit.\n"
-					+ ">> Enter the process number you want:");
+	        logUserActivity("User logged in", getCurrentTime());
 
-			String input = scanner.nextLine();
-			systemState = Validator.getValidOption(input, 2);
-			switch (systemState) {
-				case 1:
-					startFitnessPlan(scanner);
-					break;
-				case 2:
-					System.out.println("\nThank you for using the system. Goodbye!\n");
-					System.exit(0);
-					return;
-				default:
-					System.out.println("Invalid choice. Please enter 1 or 2.");
-					break;
-			}
-		resetInactivityTimer();
+	        System.out.println("\n* Welcome to the Personalized Fitness Plan Recommendation System *");
+	        // The rest of your code...
 
-		} while (true);
+	        boolean loggedIn = false;
+
+	        // Prompt for login or account creation until successful login
+	        while (!loggedIn) {
+	            if (accountExists()) {
+	                // Prompt for login if the account exists
+	                loggedIn = login(scanner);
+	                if (!loggedIn) {
+	                    System.out.println("Login failed. Would you like to create a new account? (yes/no)");
+	                    String choice = scanner.nextLine().trim().toLowerCase();
+	                    if (choice.equals("yes")) {
+	                        createAccount(scanner);
+	                    }
+	                }
+	            } else {
+	                // No account exists, ask for account creation
+	                System.out.println("No account found. Please create a new account.");
+	                createAccount(scanner);
+	            }
+	        }
+
+	        // After successful login, start inactivity timer in the main menu
+	        startInactivityTimer();
+
+	        // Show the main menu
+	        int systemState = -1;
+	        do {
+	            System.out.println("\n----------Main Menu------------");
+	            System.out.println("1- Start looking for your fit fitness plan.\n" 
+			            		+ "2- Exit.\n"
+			                    + ">> Enter the process number you want:");
+
+	            String input = scanner.nextLine();
+	            systemState = Validator.getValidOption(input, 2);
+	            switch (systemState) {
+	                case 1:
+	                    startFitnessPlan(scanner);
+	                    break;
+	                case 2:
+	                    System.out.println("\nThank you for using the system. Goodbye!\n");
+	                    logUserActivity("User logged out", getCurrentTime());
+	        	        fh.close();
+	                    System.exit(0);
+	                    return;
+	                default:
+	                    System.out.println("Invalid choice. Please enter 1 or 2.");
+	                    break;
+	            }
+	            resetInactivityTimer();
+	        } while (true);
+
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    } 
 	}
-
 	// Method to check if an account already exists by checking if the file exists
 	private static boolean accountExists() {
 		File file = new File(CREDENTIALS_FILE);
@@ -85,8 +111,18 @@ public class FitnessSystem {
 	private static void createAccount(Scanner scanner) {
 		System.out.print("Enter a username: ");
 		String username = scanner.nextLine();
+		// Validate username and password
+		if (!Validator.isValidUsername(username)) {
+			System.out.println("Invalid username. Please use only alphanumeric characters.");
+			return;
+		}
+		
 		System.out.print("Enter a password: ");
 		String password = scanner.nextLine();
+		if (!Validator.isValidPassword(password)) {
+			System.out.println("Invalid password. Password must be at least 8 characters long.");
+			return;
+		}
 
 		String hashedPassword = hashPassword(password); // Hash the password
 
