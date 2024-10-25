@@ -27,4 +27,13 @@ public class Validator {
             return false;
         }
     }
+    protected static boolean isValidUsername(String username) {
+	    // Implement validation logic for username
+	    return username.matches("[a-zA-Z0-9]+");
+	}
+
+	protected static boolean isValidPassword(String password) {
+	    // Implement validation logic for password
+	    return password.length() >= 8;
+	}
 }
