@@ -17,6 +17,7 @@ public class MedicalHistory
         int surgeries;
 
         while (true) {
+            FitnessSystem.resetInactivityTimer();
             System.out.println("\n----------Age------------");
             System.out.println(">> Enter your age: ");
             String input = scanner.nextLine();
@@ -36,6 +37,7 @@ public class MedicalHistory
         }
         
         while (true) {
+            FitnessSystem.resetInactivityTimer();
             System.out.println("\n----------Illnesses------------");
             System.out.println(">> Do you have any illnesses?:\n"
                     + "1- Yes\n"
@@ -56,6 +58,7 @@ public class MedicalHistory
         }
         
         while (true) {
+            FitnessSystem.resetInactivityTimer();
             System.out.println("\n----------Surgeries------------");
             System.out.println(">> Did you have any surgeries?:\n"
                         + "1- Yes\n"
