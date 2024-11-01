@@ -147,19 +147,19 @@ public class FitnessSystem {
 		// Read stored credentials from file
 		try (BufferedReader reader = new BufferedReader(new FileReader(CREDENTIALS_FILE))) {
 			String line;
-        while ((line = reader.readLine()) != null) {
-            String[] credentials = line.split(":");
-            String storedUsername = credentials[0];
-            String storedHashedPassword = credentials[1];
+                        while ((line = reader.readLine()) != null) {
+                            String[] credentials = line.split(":");
+                            String storedUsername = credentials[0];
+                            String storedHashedPassword = credentials[1];
 
-            if (storedUsername.equals(username) && storedHashedPassword.equals(hashedPassword)) {
-                System.out.println("Login successful! Welcome " + storedUsername + "!");
-                currentUsername = storedUsername;
-                return true;
-            }
-        }
-        System.out.println("Invalid username or password.");
-    } catch (IOException e) {
+                            if (storedUsername.equals(username) && storedHashedPassword.equals(hashedPassword)) {
+                                System.out.println("Login successful! Welcome " + storedUsername + "!");
+                                currentUsername = storedUsername;
+                                return true;
+                            }
+                        }
+                        System.out.println("Invalid username or password.");
+                } catch (IOException e) {
 			System.out.println("Error reading credentials: " + e.getMessage());
 		}
 		return false;
@@ -193,7 +193,7 @@ public class FitnessSystem {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return dateFormat.format(new Date());
 	}
-//////////////////////////////////////////////////// --------> Here
+
 	private static void startFitnessPlan(Scanner scanner) {
 		resetInactivityTimer(); // Reset timer when starting the fitness plan
 
@@ -201,24 +201,11 @@ public class FitnessSystem {
 		if (fitnessGoal == null) {
 			return;
 		}
-//		if (fitnessGoal.length() < 5) {
-//			fitnessGoal = DEFAULT_GOAL;
-//			System.out.println("Invalid choice. ");
-//			System.out.println("Default goal selected: " + DEFAULT_GOAL);
-//		}
 
 		String fitnessLevel = selectFitnessLevel(scanner, fitnessGoal);
 		if (fitnessLevel == null) {
 			return;
 		}
-//		if (fitnessLevel.length() <= 5) {
-//		fitnessLevel = DEFAULT_LEVEL;
-//		System.out.println("Invalid choice. ");
-//		System.out.println("Default Level selected: " + DEFAULT_LEVEL);
-//		} else {
-//		System.out.println("Selected Fitness Level: " + fitnessLevel);
-//		}
-//////////////////////////////////////////////////// --------> To Here
 
 		MedicalHistory.collectMedicalHistory();
 		FitnessPlan[] plans = { new Cardio(), new StrengthTraining(), new HIIT(), new Yoga(), };
@@ -232,21 +219,18 @@ public class FitnessSystem {
 						+ ExerciseTimeCalculator.calculateTime(plan.getMinDurationPerWeek(), fitnessLevel)
 						+ " minutes per week");
 				System.out.println("\tAdditional Notes:\n" + MedicalHistory.getHealthNotes());
-				foundSuitablePlan = true;
-
-				
+				foundSuitablePlan = true;	
 			}
-			// Prompt for feedback after displaying the plan
-				promptForFeedback(fitnessGoal, fitnessLevel);
 				resetInactivityTimer(); // Reset timer when starting the fitness plan
-
 		}
 
 		if (!foundSuitablePlan) {
 			System.out.println("\n\tNo suitable plan found for your fitness goal and level.\n");
 		}
+                // Prompt for feedback after displaying the plan
+		promptForFeedback(fitnessGoal, fitnessLevel);
 	}
-		    //Method to start the inactivity timer after login
+            //Method to start the inactivity timer after login
 	    private static void startInactivityTimer() {
 		inactivityTimer = new Timer();
 	
@@ -276,7 +260,7 @@ public class FitnessSystem {
     }
 
     // Modified: Method to reset the inactivity timer after user interaction
-    private static void resetInactivityTimer() {
+    protected static void resetInactivityTimer() {
         if (inactivityTimer != null) {
             inactivityTimer.cancel();
         }
@@ -284,9 +268,9 @@ public class FitnessSystem {
     }
         //correct
 	private static String selectFitnessGoal(Scanner scanner) {
-		resetInactivityTimer();
 		String fitnessGoal = null;
 		while (fitnessGoal == null) {
+                        resetInactivityTimer();
 			System.out.println("\n----------Fitness Goal Menu------------");
 			System.out.println("1- Weight Loss\n" + "2- Muscle Building\n" + "3- Improve Cardiovascular Health\n"
 					+ "4- Stress Relief\n" + "5- Return to Main Menu\n" + ">> Enter your Fitness Goal:");
@@ -295,7 +279,6 @@ public class FitnessSystem {
 
 			int goalOption = Validator.getValidOption(input, 5);
 
-//////////////////////////////////////////////////// --------> Here
 			switch (goalOption) {
 				case 1:
 					return "Weight Loss";
@@ -316,12 +299,11 @@ public class FitnessSystem {
 		}
 		return fitnessGoal;
 	}
-        //correct
-	private static String selectFitnessLevel(Scanner scanner, String fitnessGoal) {
-		resetInactivityTimer();
+        
+	private static String selectFitnessLevel(Scanner scanner, String fitnessGoal) {	
 		String fitnessLevel = null;
-
 		while (fitnessLevel == null) {
+                    resetInactivityTimer();
 			System.out.println("\n----------Fitness Level Menu------------");
 			System.out.println("1- Beginner\n" + "2- Intermediate\n" + "3- Advanced\n" + "4- Return to Main Menu\n"
 					+ ">> Enter your Current Fitness Level:");
@@ -382,14 +364,17 @@ public class FitnessSystem {
 		}
 		return fitnessLevel;
 	}
-// Method to prompt the user for feedback on the fitness plan
+        
+    // Method to prompt the user for feedback on the fitness plan
     private static void promptForFeedback(String fitnessGoal, String fitnessLevel) {
         Scanner scanner = new Scanner(System.in);
         int rating = -1;
         
         // Ask for a rating between 1 and 5
         while (rating < 1 || rating > 5) {
-            System.out.print("\nPlease rate the fitness plan on a scale from 1 to 5 (5 = Excellent, 1 = Poor): ");
+            resetInactivityTimer();
+             System.out.println("\n----------Feed back------------");
+            System.out.println("Please rate the fitness plan on a scale from 1 to 5 (5 = Excellent, 1 = Poor): ");
             String input = scanner.nextLine();
             try {
                 rating = Integer.parseInt(input);
@@ -415,5 +400,3 @@ public class FitnessSystem {
         }
     }
 }
-
-////////////////////////
