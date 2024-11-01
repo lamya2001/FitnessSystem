@@ -26,7 +26,7 @@ public class FitnessSystem {
    	private static final String FEEDBACK_FILE = "feedback.txt"; // File to store feedback	
         private static Timer inactivityTimer; // Timer for inactivity after login
         private static final int FIRST_WARNING_TIME = 15000; // 15 seconds
-        private static final int RETURN_TO_LOGIN_TIME = 25000; // 25 seconds (15+10)
+        private static final int EXIT_SYSTEM = 25000; // 25 seconds (15+10)
 	private static Logger logger = Logger.getLogger("UserActivityLog");
 	private static FileHandler fh;
 
@@ -266,11 +266,11 @@ public class FitnessSystem {
 		    public void run() {
 			System.out.println("Returning to login screen due to inactivity.");
 			inactivityTimer.cancel(); // Cancel the timer
-			resetToLogin(); // Reset the state and return to login
+			exitSystem(); // Reset the state and return to login
 		    }
-		}, RETURN_TO_LOGIN_TIME);
+		}, EXIT_SYSTEM);
 	    }
-	    private static void resetToLogin() {
+	    private static void exitSystem() {
         System.out.println("\nLogging out due to inactivity...");
         System.exit(0);
     }
