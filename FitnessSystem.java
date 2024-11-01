@@ -33,7 +33,7 @@ public class FitnessSystem {
 
 	public static void main(String[] args) {
 				Scanner scanner = new Scanner(System.in);
-try {
+            try {
 	        fh = new FileHandler("user_activity.log", true); // Append mode set to true
 	        logger.addHandler(fh);
 	        SimpleFormatter formatter = new SimpleFormatter();
@@ -126,9 +126,10 @@ try {
 		String hashedPassword = hashPassword(password); // Hash the password
 
 		// Store the credentials in a file
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(CREDENTIALS_FILE))) {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(CREDENTIALS_FILE, true))) {
 			writer.write(username + ":" + hashedPassword);
-			System.out.println("Account created successfully!");
+			 writer.newLine(); // Start a new line after each entry
+                        System.out.println("Account created successfully!");
 		} catch (IOException e) {
 			System.out.println("Error storing credentials: " + e.getMessage());
 		}
@@ -141,26 +142,24 @@ try {
 		String username = scanner.nextLine();
 		System.out.print("Enter your password: ");
 		String password = scanner.nextLine();
+                String hashedPassword = hashPassword(password); // Hash the entered password
 
 		// Read stored credentials from file
 		try (BufferedReader reader = new BufferedReader(new FileReader(CREDENTIALS_FILE))) {
-			String line = reader.readLine();
-			if (line != null) {
-				String[] credentials = line.split(":");
-				String storedUsername = credentials[0];
-				String storedHashedPassword = credentials[1];
+			String line;
+        while ((line = reader.readLine()) != null) {
+            String[] credentials = line.split(":");
+            String storedUsername = credentials[0];
+            String storedHashedPassword = credentials[1];
 
-				String hashedPassword = hashPassword(password); // Hash the entered password
-
-				if (storedUsername.equals(username) && storedHashedPassword.equals(hashedPassword)) {
-					System.out.println("Login successful! Welcome " + storedUsername + "!");
-                                        currentUsername = storedUsername;
-					return true;
-				} else {
-					System.out.println("Invalid username or password.");
-				}
-			}
-		} catch (IOException e) {
+            if (storedUsername.equals(username) && storedHashedPassword.equals(hashedPassword)) {
+                System.out.println("Login successful! Welcome " + storedUsername + "!");
+                currentUsername = storedUsername;
+                return true;
+            }
+        }
+        System.out.println("Invalid username or password.");
+    } catch (IOException e) {
 			System.out.println("Error reading credentials: " + e.getMessage());
 		}
 		return false;
@@ -417,4 +416,4 @@ try {
     }
 }
 
-//////////////////////////////////////////////////// --------> To Here
+////////////////////////
