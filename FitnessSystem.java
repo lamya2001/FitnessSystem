@@ -185,6 +185,15 @@ public class FitnessSystem {
 			throw new RuntimeException(e);
 		}
 	}
+	private static void logUserActivity(String activity, String activityTime) {
+		String logMessage = ">" + activityTime + " - " + activity;
+		logger.info(logMessage);
+	}
+
+	private static String getCurrentTime() {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return dateFormat.format(new Date());
+	}
 //////////////////////////////////////////////////// --------> Here
 	private static void startFitnessPlan(Scanner scanner) {
 		resetInactivityTimer(); // Reset timer when starting the fitness plan
@@ -225,6 +234,11 @@ public class FitnessSystem {
 						+ " minutes per week");
 				System.out.println("\tAdditional Notes:\n" + MedicalHistory.getHealthNotes());
 				foundSuitablePlan = true;
+
+				// Prompt for feedback after displaying the plan
+				promptForFeedback(fitnessGoal, fitnessLevel);
+				resetInactivityTimer(); // Reset timer when starting the fitness plan
+
 			}
 		}
 
