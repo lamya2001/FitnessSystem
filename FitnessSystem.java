@@ -33,16 +33,13 @@ public class FitnessSystem {
 
 	public static void main(String[] args) {
 				Scanner scanner = new Scanner(System.in);
-
-	    try {
+try {
 	        fh = new FileHandler("user_activity.log", true); // Append mode set to true
 	        logger.addHandler(fh);
 	        SimpleFormatter formatter = new SimpleFormatter();
 	        fh.setFormatter(formatter);
 
 	        logger.setLevel(Level.INFO); // Set the logging level as needed
-
-	        logUserActivity("User logged in", getCurrentTime());
 
 	        System.out.println("\n* Welcome to the Personalized Fitness Plan Recommendation System *");
 	        // The rest of your code...
@@ -54,6 +51,7 @@ public class FitnessSystem {
 	            if (accountExists()) {
 	                // Prompt for login if the account exists
 	                loggedIn = login(scanner);
+	                
 	                if (!loggedIn) {
 	                    System.out.println("Login failed. Would you like to create a new account? (yes/no)");
 	                    String choice = scanner.nextLine().trim().toLowerCase();
@@ -66,8 +64,8 @@ public class FitnessSystem {
 	                System.out.println("No account found. Please create a new account.");
 	                createAccount(scanner);
 	            }
+	            logUserActivity("User: " + currentUsername + " logged in", getCurrentTime());
 	        }
-
 	        // After successful login, start inactivity timer in the main menu
 	        startInactivityTimer();
 
@@ -87,7 +85,7 @@ public class FitnessSystem {
 	                    break;
 	                case 2:
 	                    System.out.println("\nThank you for using the system. Goodbye!\n");
-	                    logUserActivity("User logged out", getCurrentTime());
+	                    logUserActivity("User: " + currentUsername + " logged out", getCurrentTime());
 	        	        fh.close();
 	                    System.exit(0);
 	                    return;
@@ -237,11 +235,12 @@ public class FitnessSystem {
 				System.out.println("\tAdditional Notes:\n" + MedicalHistory.getHealthNotes());
 				foundSuitablePlan = true;
 
-				// Prompt for feedback after displaying the plan
+				
+			}
+			// Prompt for feedback after displaying the plan
 				promptForFeedback(fitnessGoal, fitnessLevel);
 				resetInactivityTimer(); // Reset timer when starting the fitness plan
 
-			}
 		}
 
 		if (!foundSuitablePlan) {
