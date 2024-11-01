@@ -1,6 +1,5 @@
 package com.mycompany.fitnesssystem;
 
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -29,6 +28,8 @@ public class FitnessSystem {
         private static final int EXIT_SYSTEM = 25000; // 25 seconds (15+10)
 	private static Logger logger = Logger.getLogger("UserActivityLog");
 	private static FileHandler fh;
+        private static String currentUsername;
+
 
 	public static void main(String[] args) {
 				Scanner scanner = new Scanner(System.in);
@@ -155,6 +156,7 @@ public class FitnessSystem {
 
 				if (storedUsername.equals(username) && storedHashedPassword.equals(hashedPassword)) {
 					System.out.println("Login successful! Welcome " + storedUsername + "!");
+                                        currentUsername = storedUsername;
 					return true;
 				} else {
 					System.out.println("Invalid username or password.");
